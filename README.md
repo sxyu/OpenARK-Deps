@@ -34,6 +34,9 @@ This dependency pack contains the following:
  
 ### CMakeLists.txt
  The install directory should contain `CMakeLists.txt`, a CMake script to set dependency paths automatically.
+
+### Uninstalling
+ Due to a bug, the uninstall process is done by manually specifying all of the dependencies. If more dependencies are added in the future, they should also be specified in the uninstall section of main.nsi in order for the uninstaller to successfully  uninstall them.
  
 ## License
 Apache 2.0. See [augcog/OpenARK](https://github.com/augcog/openark) for the license.
