@@ -1,5 +1,4 @@
 ; Start
-
   !include LogicLib.nsh
   !include "winmessages.nsh"
   !include "MUI.nsh"
@@ -66,8 +65,8 @@
 Section "install" ;Installation info
 
 ;Add files
+  !include()
   SetOutPath "$INSTDIR"
-
   File /R "..\arkdeps\*"
 
 ;write uninstall information to the registry
@@ -77,9 +76,12 @@ Section "install" ;Installation info
   ;SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 
   EnVar::SetHKCU
-  EnVar::AddValue "PATH" "$INSTDIR\bin"
+  EnVar::AddValue "PATH" "$INSTDIR\extra\bin"
 
-  WriteUninstaller "$INSTDIR\Uninstall.exe"
+  WriteUninstaller "$INSTDIR\extra\Uninstall.exe"
+
+;Rearrange Files
+  Rename "$INSTDIR\CMakeLists.txt" "$INSTDIR\extra\CMakeLists.txt"
 
 SectionEnd
 
