@@ -1,5 +1,6 @@
 ; Start
 
+  !include LogicLib.nsh
   !include "winmessages.nsh"
   !include "MUI.nsh"
   !define MUI_NAME "OpenARK Dependency Pack"
@@ -83,11 +84,21 @@ Section "install" ;Installation info
 SectionEnd
 
 ;--------------------------------
-;Uninstaller Section
-Section "Uninstall"
+;Uninstaller user check Function
+Function checkUninstallFilesWithUser
+  MessageBox MB_OK "OpenARK installed files that will be uninstalled: "
+  MessageBox MB_YESNO "Are you sure you want to uninstall these files?" IDYES NoAbort
+    DetailPrint "Cancelling..."
+    Abort
+  NoAbort:
 
-;Delete Files
-;Replacing: RMDir /r "$INSTDIR\*.*"
+  ;Delete Files
+  ;Replacing: RMDir /r "$INSTDIR\*.*"
+  ;if check to see if all of these folders exist, only then should I remove these. if not, then return error message saying uinstall should stop
+  ;bin, cmakelist, and uninstall - we should create a separate directory/folder to contain these three. Then, we avoid the risk of deleting the wrong bin
+  ;maybe just adding a method for checking if the user wants to delete these yes/no. list all the files/locations that would be uninstalled, similar to apt-install log
+
+  ; simply listing file names for deleting and yes/no choices is all I need
 
   RMDir /r "$INSTDIR\bin"
   RMDir /r "$INSTDIR\brisk"
@@ -106,15 +117,15 @@ Section "Uninstall"
   RMDir /r "$INSTDIR\CMakeLists.txt"
   RMDir /r "$INSTDIR\Uninstall.exe"
 
-;Remove the installation directory
-;Hold off on this command for now: RMDir "$INSTDIR"
+  ;Remove the installation directory
+  RMDir "$INSTDIR"
 
-;Delete Start Menu Shortcuts
+  ;Delete Start Menu Shortcuts
   ;Delete "$DESKTOP\${MUI_NAME}.lnk"
   ;Delete "$SMPROGRAMS\${MUI_NAME}\*.*"
   ;RmDir  "$SMPROGRAMS\${MUI_NAME}"
 
-;Delete Uninstaller And Unistall Registry Entries
+  ;Delete Uninstaller And Unistall Registry Entries
   DeleteRegKey HKLM "SOFTWARE\openark-deps"
   DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\openark-deps"
   DeleteRegValue HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment" "ARK_DEPS_DIR"
@@ -122,6 +133,12 @@ Section "Uninstall"
 
   EnVar::SetHKCU
   EnVar::DeleteValue "PATH" "$INSTDIR\bin"
+FunctionEnd
+
+;Uninstaller Section
+
+Section "Uninstall"
+  Call checkUninstallFilesWithUser
 SectionEnd
 
 
